@@ -8,8 +8,13 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
 @Database(
-    entities = [LibraryItemEntity::class, LibraryOutboxEntity::class, AccountMutationOutboxEntity::class],
-    version = 3,
+    entities = [
+        LibraryItemEntity::class,
+        LibraryOutboxEntity::class,
+        AccountMutationOutboxEntity::class,
+        EpisodeWatchEntity::class,
+    ],
+    version = 4,
     exportSchema = true,
 )
 abstract class SmartMovieDatabase : RoomDatabase() {
@@ -20,7 +25,7 @@ abstract class SmartMovieDatabase : RoomDatabase() {
             context.applicationContext,
             SmartMovieDatabase::class.java,
             "smartmovie_library.db",
-        ).addMigrations(MIGRATION_1_2, MIGRATION_2_3).build()
+        ).addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4).build()
 
         val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(db: SupportSQLiteDatabase) {
@@ -60,6 +65,25 @@ abstract class SmartMovieDatabase : RoomDatabase() {
                         lastAttemptAt INTEGER,
                         lastError TEXT
                     )""".trimIndent(),
+                )
+            }
+        }
+
+        val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    """CREATE TABLE IF NOT EXISTS episode_watch_progress (
+                        episodeKey TEXT NOT NULL PRIMARY KEY,
+                        seriesId INTEGER NOT NULL,
+                        seasonNumber INTEGER NOT NULL,
+                        episodeNumber INTEGER NOT NULL,
+                        watchedAt INTEGER NOT NULL,
+                        updatedAt INTEGER NOT NULL
+                    )""".trimIndent(),
+                )
+                db.execSQL(
+                    "CREATE INDEX IF NOT EXISTS index_episode_watch_progress_seriesId_seasonNumber " +
+                        "ON episode_watch_progress(seriesId, seasonNumber)",
                 )
             }
         }

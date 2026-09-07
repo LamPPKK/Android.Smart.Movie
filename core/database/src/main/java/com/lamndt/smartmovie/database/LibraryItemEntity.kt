@@ -1,6 +1,7 @@
 package com.lamndt.smartmovie.database
 
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "library_items")
@@ -52,4 +53,17 @@ data class AccountMutationOutboxEntity(
     val attemptCount: Int = 0,
     val lastAttemptAt: Long? = null,
     val lastError: String? = null,
+)
+
+@Entity(
+    tableName = "episode_watch_progress",
+    indices = [Index(value = ["seriesId", "seasonNumber"])],
+)
+data class EpisodeWatchEntity(
+    @PrimaryKey val episodeKey: String,
+    val seriesId: Int,
+    val seasonNumber: Int,
+    val episodeNumber: Int,
+    val watchedAt: Long,
+    val updatedAt: Long,
 )

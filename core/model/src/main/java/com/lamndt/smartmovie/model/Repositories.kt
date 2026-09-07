@@ -170,6 +170,28 @@ interface LibraryRepository {
     suspend fun toggle(title: TitleSummary, collection: LibraryCollection)
 }
 
+data class EpisodeWatchKey(val seriesId: Int, val seasonNumber: Int, val episodeNumber: Int) {
+    init {
+        require(seriesId > 0)
+        require(seasonNumber >= 0)
+        require(episodeNumber >= 0)
+    }
+
+    val rawValue: String get() = "$seriesId:$seasonNumber:$episodeNumber"
+}
+
+interface EpisodeProgressRepository {
+    fun observeWatched(key: EpisodeWatchKey): Flow<Boolean>
+    fun observeSeason(seriesId: Int, seasonNumber: Int): Flow<Set<Int>>
+    suspend fun setWatched(key: EpisodeWatchKey, watched: Boolean)
+    suspend fun setSeasonWatched(
+        seriesId: Int,
+        seasonNumber: Int,
+        episodeNumbers: Collection<Int>,
+        watched: Boolean,
+    )
+}
+
 interface LibrarySyncRepository : LibraryRepository {
     suspend fun activateAccount(accountId: Int)
     suspend fun deactivateAccount(removeAccountData: Boolean)

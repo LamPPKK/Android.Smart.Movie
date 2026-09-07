@@ -8,6 +8,21 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface LibraryDao {
+    @Query("SELECT * FROM episode_watch_progress WHERE episodeKey = :key LIMIT 1")
+    fun observeEpisodeWatch(key: String): Flow<EpisodeWatchEntity?>
+
+    @Query("SELECT episodeNumber FROM episode_watch_progress WHERE seriesId = :seriesId AND seasonNumber = :seasonNumber")
+    fun observeWatchedEpisodes(seriesId: Int, seasonNumber: Int): Flow<List<Int>>
+
+    @Upsert
+    suspend fun upsertEpisodeWatch(item: EpisodeWatchEntity)
+
+    @Query("DELETE FROM episode_watch_progress WHERE episodeKey = :key")
+    suspend fun deleteEpisodeWatch(key: String)
+
+    @Query("DELETE FROM episode_watch_progress WHERE episodeKey IN (:keys)")
+    suspend fun deleteEpisodeWatches(keys: List<String>)
+
     @Query("SELECT * FROM library_items")
     fun observeAll(): Flow<List<LibraryItemEntity>>
 

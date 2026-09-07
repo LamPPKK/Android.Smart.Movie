@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.Configuration
 import com.lamndt.smartmovie.data.DefaultCatalogRepository
 import com.lamndt.smartmovie.data.DefaultLibraryRepository
+import com.lamndt.smartmovie.data.DefaultEpisodeProgressRepository
 import com.lamndt.smartmovie.data.DurableAccountMutationOutbox
 import com.lamndt.smartmovie.data.ImageUrlFactory
 import com.lamndt.smartmovie.database.SmartMovieDatabase
@@ -36,6 +37,7 @@ class AppContainer(context: Context, baseUrl: String) {
     private val network = CatalogNetworkDataSource(context, baseUrl)
     val catalog: CatalogV2Repository = DefaultCatalogRepository(network)
     val library: LibrarySyncRepository = DefaultLibraryRepository(database)
+    val episodeProgress = DefaultEpisodeProgressRepository(database)
     val account: AccountRepository = AccountNetworkRepository(context, baseUrl)
     val accountOutbox = DurableAccountMutationOutbox(database, account)
     val preferences = CatalogPreferences(context)
