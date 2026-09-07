@@ -421,6 +421,7 @@ data class TitleDetailV2(
     @SerialName("release_information") val releaseInformation: List<ReleaseInformation> = emptyList(),
     val translations: List<TitleTranslation> = emptyList(),
     @SerialName("watch_providers") val watchProviders: List<ProviderRegion> = emptyList(),
+    val keywords: List<KeywordSummary> = emptyList(),
 ) {
     val summary get() = TitleSummary(id, mediaType, title, originalTitle, overview, posterPath, backdropPath, releaseDate, voteAverage, genreIds, adult)
 
