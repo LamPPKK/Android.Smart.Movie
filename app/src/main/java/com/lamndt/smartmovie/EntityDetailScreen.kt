@@ -17,12 +17,17 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -49,6 +54,7 @@ import com.lamndt.smartmovie.model.CollectionDetail
 import com.lamndt.smartmovie.model.Credit
 import com.lamndt.smartmovie.model.EntityKind
 import com.lamndt.smartmovie.model.EpisodeDetail
+import com.lamndt.smartmovie.model.EpisodeWatchKey
 import com.lamndt.smartmovie.model.ImageKind
 import com.lamndt.smartmovie.model.KeywordDetail
 import com.lamndt.smartmovie.model.OrganizationDetail
@@ -58,6 +64,7 @@ import com.lamndt.smartmovie.model.TitleSummary
 import com.lamndt.smartmovie.model.visibleCatalogCredits
 import com.lamndt.smartmovie.model.visibleCatalogTitles
 import java.util.Locale
+import kotlinx.coroutines.launch
 
 private sealed interface EntityDetailState {
     data object Loading : EntityDetailState
@@ -157,8 +164,8 @@ internal fun EntityDetailScreen(
                 images,
                 onTitle,
             )
-            is EntityDetailState.Season -> SeasonContent(value.value, images, onEntity, onCredit)
-            is EntityDetailState.Episode -> EpisodeContent(value.value, images, episodeRating, onCredit)
+            is EntityDetailState.Season -> SeasonContent(value.value, images, onEntity, onCredit, appContainer)
+            is EntityDetailState.Episode -> EpisodeContent(value.value, images, episodeRating, onCredit, appContainer)
         }
     }
 }
@@ -215,7 +222,14 @@ private fun SeasonContent(
     images: ImageUrlFactory,
     onEntity: (CatalogEntity) -> Unit,
     onCredit: (Credit) -> Unit,
+    appContainer: AppContainer?,
 ) {
+    val scope = rememberCoroutineScope()
+    val watched by (appContainer?.episodeProgress?.observeSeason(value.seriesId, value.seasonNumber)
+        ?: kotlinx.coroutines.flow.flowOf(emptySet())).collectAsState(initial = emptySet())
+    val episodeNumbers = remember(value.episodes) { value.episodes.map { it.episodeNumber }.distinct() }
+    val watchedCount = episodeNumbers.count { it in watched }
+    val seasonWatched = episodeNumbers.isNotEmpty() && watchedCount == episodeNumbers.size
     LazyColumn(contentPadding = PaddingValues(24.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         value.posterPath?.let { posterPath ->
             item {
@@ -236,19 +250,41 @@ private fun SeasonContent(
                 externalIds = value.externalIds,
             )
         }
+        if (episodeNumbers.isNotEmpty()) item {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(stringResource(R.string.episode_progress), style = MaterialTheme.typography.titleLarge)
+                Text(stringResource(R.string.watched_progress, watchedCount, episodeNumbers.size), color = CinemaColors.Muted)
+                LinearProgressIndicator(
+                    progress = { watchedCount.toFloat() / episodeNumbers.size },
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                Button(onClick = {
+                    appContainer?.episodeProgress?.let { repository ->
+                        scope.launch { repository.setSeasonWatched(value.seriesId, value.seasonNumber, episodeNumbers, !seasonWatched) }
+                    }
+                }) { Text(stringResource(if (seasonWatched) R.string.mark_season_unwatched else R.string.mark_season_watched)) }
+            }
+        }
         item { CatalogMediaSection(value.images, value.videos, images) }
         item { CreditShelf(stringResource(R.string.cast), value.credits.cast, images, onCredit) }
         item { CreditShelf(stringResource(R.string.crew), value.credits.crew, images, onCredit) }
         items(value.episodes, key = { it.episodeKey }) { episode ->
-            Row(
-                Modifier.fillMaxWidth().clickable { onEntity(CatalogEntity.Episode(episode)) }.padding(10.dp),
-                horizontalArrangement = Arrangement.spacedBy(14.dp),
-            ) {
-                RemoteArtwork(images.url(episode.stillPath, ImageKind.BACKDROP), episode.name, Modifier.width(190.dp).aspectRatio(1.77f))
-                Column {
-                    Text("E${episode.episodeNumber} · ${episode.name}", style = MaterialTheme.typography.titleMedium)
-                    Text(episode.overview, color = CinemaColors.Muted, maxLines = 3, overflow = TextOverflow.Ellipsis)
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Row(
+                    Modifier.fillMaxWidth().clickable { onEntity(CatalogEntity.Episode(episode)) }.padding(10.dp),
+                    horizontalArrangement = Arrangement.spacedBy(14.dp),
+                ) {
+                    RemoteArtwork(images.url(episode.stillPath, ImageKind.BACKDROP), episode.name, Modifier.width(190.dp).aspectRatio(1.77f))
+                    Column {
+                        Text("E${episode.episodeNumber} · ${episode.name}", style = MaterialTheme.typography.titleMedium)
+                        Text(episode.overview, color = CinemaColors.Muted, maxLines = 3, overflow = TextOverflow.Ellipsis)
+                    }
                 }
+                OutlinedButton(onClick = {
+                    appContainer?.episodeProgress?.let { repository ->
+                        scope.launch { repository.setWatched(EpisodeWatchKey(value.seriesId, value.seasonNumber, episode.episodeNumber), episode.episodeNumber !in watched) }
+                    }
+                }) { Text(stringResource(if (episode.episodeNumber in watched) R.string.mark_as_unwatched else R.string.mark_as_watched)) }
             }
         }
     }
@@ -260,12 +296,24 @@ private fun EpisodeContent(
     images: ImageUrlFactory,
     rating: AccountRatingBinding,
     onCredit: (Credit) -> Unit,
+    appContainer: AppContainer?,
 ) {
+    val scope = rememberCoroutineScope()
+    val watchKey = remember(value.seriesId, value.seasonNumber, value.episodeNumber) {
+        EpisodeWatchKey(value.seriesId, value.seasonNumber, value.episodeNumber)
+    }
+    val watched by (appContainer?.episodeProgress?.observeWatched(watchKey)
+        ?: kotlinx.coroutines.flow.flowOf(false)).collectAsState(initial = false)
     LazyColumn(contentPadding = PaddingValues(24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         item { RemoteArtwork(images.url(value.stillPath, ImageKind.BACKDROP), value.name, Modifier.fillMaxWidth().aspectRatio(1.77f)) }
         item { Text("S${value.seasonNumber} · E${value.episodeNumber}", color = CinemaColors.Accent, fontWeight = FontWeight.Black) }
         item { Text(value.name, style = MaterialTheme.typography.displayMedium) }
         item { Text(value.overview, color = CinemaColors.Muted) }
+        item {
+            OutlinedButton(onClick = {
+                appContainer?.episodeProgress?.let { repository -> scope.launch { repository.setWatched(watchKey, !watched) } }
+            }) { Text(stringResource(if (watched) R.string.mark_as_unwatched else R.string.mark_as_watched)) }
+        }
         item {
             CatalogMetadataSection(
                 values = buildList {
