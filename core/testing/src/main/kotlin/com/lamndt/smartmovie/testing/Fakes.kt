@@ -76,6 +76,8 @@ class FakeCatalogRepository : CatalogRepository {
 class FakeCatalogV2Repository(
     val legacy: FakeCatalogRepository = FakeCatalogRepository(),
 ) : CatalogV2Repository, CatalogRepository by legacy {
+    var trendingResult: suspend (String, String, Int, String, Boolean) -> PagedResult<CatalogEntity> =
+        { kind, _, page, _, _ -> PagedResult(page, page, emptyList()) }
     val externalIdCalls = mutableListOf<Triple<String, ExternalIdSource, String>>()
     val externalIdAdultFlags = mutableListOf<Boolean>()
     val entitySearchAdultFlags = mutableListOf<Boolean>()
@@ -99,7 +101,7 @@ class FakeCatalogV2Repository(
         page: Int,
         language: String,
         includeAdult: Boolean,
-    ): PagedResult<CatalogEntity> = error("Not configured")
+    ): PagedResult<CatalogEntity> = trendingResult(kind, window, page, language, includeAdult)
 
     override suspend fun searchEntities(
         query: String,
