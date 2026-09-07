@@ -88,5 +88,5 @@
     <string name="production_code">制作コード</string>
     <string name="votes">投票数</string>
     <string name="episode_progress">エピソードの進捗</string><string name="mark_as_watched">視聴済みにする</string><string name="mark_as_unwatched">未視聴に戻す</string><string name="mark_season_watched">シーズンを視聴済みにする</string><string name="mark_season_unwatched">シーズンを未視聴に戻す</string><string name="watched_progress">%1$d/%2$d 話を視聴済み</string>
-    <string name="trending">今週のトレンド</string><string name="trending_day">今日</string><string name="trending_week">今週</string>
+    <string name="trending">今週のトレンド</string><string name="trending_today">今日のトレンド</string><string name="trending_day">今日</string><string name="trending_week">今週</string>
 </resources>

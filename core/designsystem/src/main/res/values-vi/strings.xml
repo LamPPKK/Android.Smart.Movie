@@ -97,5 +97,5 @@
     <string name="mark_season_watched">Đánh dấu mùa đã xem</string>
     <string name="mark_season_unwatched">Bỏ đánh dấu mùa</string>
     <string name="watched_progress">Đã xem %1$d/%2$d</string>
-    <string name="trending">Xu hướng tuần này</string><string name="trending_day">Hôm nay</string><string name="trending_week">Tuần này</string>
+    <string name="trending">Xu hướng tuần này</string><string name="trending_today">Xu hướng hôm nay</string><string name="trending_day">Hôm nay</string><string name="trending_week">Tuần này</string>
 </resources>

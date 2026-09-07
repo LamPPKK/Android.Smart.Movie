@@ -48,6 +48,7 @@
     <string name="featured_film">FEATURED FILM</string>
     <string name="featured_series">FEATURED SERIES</string>
     <string name="trending">Trending this week</string>
+    <string name="trending_today">Trending today</string>
     <string name="trending_day">Today</string>
     <string name="trending_week">This week</string>
     <string name="view_details">View details</string>

@@ -115,7 +115,10 @@ fun HomeScreen(
                 homeFeed(feed.value, images, onTitleClick, horizontalPadding)
                 val trending = (state.trending as? Loadable.Loaded<List<TitleSummary>>)?.value.orEmpty()
                 if (trending.isNotEmpty()) item {
-                    SectionTitle(stringResource(R.string.trending), Modifier.padding(horizontal = horizontalPadding))
+                    SectionTitle(
+                        stringResource(if (state.trendingWindow == "day") R.string.trending_today else R.string.trending),
+                        Modifier.padding(horizontal = horizontalPadding),
+                    )
                     LazyRow(
                         contentPadding = PaddingValues(horizontal = horizontalPadding),
                         horizontalArrangement = Arrangement.spacedBy(14.dp),
