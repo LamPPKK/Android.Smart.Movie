@@ -53,4 +53,17 @@ class HomeViewModelTest {
         advanceUntilIdle()
         assertThat((viewModel.state.value.trending as Loadable.Loaded).value).containsExactly(trendingTitle)
     }
+
+    @Test
+    fun changingTrendingWindowReloadsWithDay() = runTest(dispatcher) {
+        val catalog = com.lamndt.smartmovie.testing.FakeCatalogV2Repository().apply {
+            legacy.homeResult = { HomeFeed(it) }
+        }
+        val viewModel = HomeViewModel(catalog, "en-US")
+        advanceUntilIdle()
+        viewModel.selectTrendingWindow("day")
+        advanceUntilIdle()
+        assertThat(viewModel.state.value.trendingWindow).isEqualTo("day")
+        assertThat(catalog.trendingCalls.map { it.second }).containsExactly("week", "day").inOrder()
+    }
 }

@@ -81,6 +81,7 @@ class FakeCatalogV2Repository(
     val externalIdCalls = mutableListOf<Triple<String, ExternalIdSource, String>>()
     val externalIdAdultFlags = mutableListOf<Boolean>()
     val entitySearchAdultFlags = mutableListOf<Boolean>()
+    val trendingCalls = mutableListOf<Pair<String, String>>()
     var externalIdResult: suspend (String, ExternalIdSource) -> ExternalIdFindResult = { id, source ->
         ExternalIdFindResult(source, id, emptyList())
     }
@@ -101,7 +102,10 @@ class FakeCatalogV2Repository(
         page: Int,
         language: String,
         includeAdult: Boolean,
-    ): PagedResult<CatalogEntity> = trendingResult(kind, window, page, language, includeAdult)
+    ): PagedResult<CatalogEntity> {
+        trendingCalls += kind to window
+        return trendingResult(kind, window, page, language, includeAdult)
+    }
 
     override suspend fun searchEntities(
         query: String,
