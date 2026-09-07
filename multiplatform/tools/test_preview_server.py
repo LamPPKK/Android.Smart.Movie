@@ -52,7 +52,7 @@ class PreviewImagesTests(unittest.TestCase):
         for route in (
             "/v1/home", "/v1/home?media_type=tv", "/v1/titles/movie/550",
             "/v1/discover/movie", "/v1/search?query=club",
-            "/v2/titles/movie/550", "/v2/titles/tv/1396", "/v2/discover/tv",
+            "/v2/home", "/v2/home?media_type=tv", "/v2/titles/movie/550", "/v2/titles/tv/1396", "/v2/discover/tv",
             "/v2/trending/all/week", "/v2/search?query=club",
         ):
             with self.subTest(route=route):

@@ -153,6 +153,16 @@ class PreviewHandler(SimpleHTTPRequestHandler):
         media_type = query.get("media_type", ["movie"])[0]
         if path == "/v2/capabilities":
             payload = contract_fixture("capabilities")
+        elif path == "/v2/home":
+            filtered = [item for item in TITLES if item["media_type"] == media_type]
+            payload = {
+                "media_type": media_type,
+                "hero": filtered[0] if filtered else TITLES[0],
+                "sections": [
+                    {"id": "trending", "title": "Trending now", "items": unique_titles(filtered + TITLES[:4])},
+                    {"id": "top-rated", "title": "Modern classics", "items": list(reversed(TITLES))},
+                ],
+            }
         elif path == "/v2/configuration":
             payload = contract_fixture("configuration")
             payload["images"] = {
