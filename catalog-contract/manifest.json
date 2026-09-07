@@ -4,6 +4,6 @@
   "upstream_repository": "LamPPKK/Smart-Movie-iOS",
   "upstream_commit": "d6c938d36d51d0e087c943e7ad1cbccb953a49c6",
   "openapi_sha256": "0bba0343fedc5bdeef88e2308b7d87928e1889ba10002588ae5c229a1f0ee158",
-  "fixtures_sha256": "d5bcb3a270e54c7aa6e73ef1ebf5dd0f17630f94d6a6c27559821dab10146874",
+  "fixtures_sha256": "dc2a5ae7db5a87a4a9c7674a07d486f6ff084dd97aff8bc78c1514732047a9ec",
   "legacy_v1_contract_version": "1.0.0"
 }

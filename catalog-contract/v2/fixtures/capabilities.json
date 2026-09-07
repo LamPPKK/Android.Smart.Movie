@@ -18,6 +18,7 @@
     "tv_qr_auth": true,
     "favorites": true,
     "watchlist": true,
+    "account_details": true,
     "ratings": true,
     "recommendations": true,
     "mixed_lists": true
