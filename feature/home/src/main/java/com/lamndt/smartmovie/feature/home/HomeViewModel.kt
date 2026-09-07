@@ -50,7 +50,7 @@ class HomeViewModel(
     fun refresh() {
         loadJob?.cancel()
         loadJob = viewModelScope.launch {
-            mutableState.update { it.copy(feed = Loadable.Loading) }
+            mutableState.update { it.copy(feed = Loadable.Loading, trending = Loadable.Idle) }
             try {
                 val result = catalog.home(mutableState.value.mediaType, language)
                 val trending = (catalog as? CatalogV2Repository)?.let {

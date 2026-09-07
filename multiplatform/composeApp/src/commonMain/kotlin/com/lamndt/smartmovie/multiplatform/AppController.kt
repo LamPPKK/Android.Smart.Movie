@@ -316,7 +316,7 @@ class AppController(
     fun reloadHome() {
         homeJob?.cancel()
         homeJob = scope.launch {
-            mutableState.update { it.copy(home = LoadState.Loading) }
+            mutableState.update { it.copy(home = LoadState.Loading, trending = emptyList()) }
             val snapshot = state.value
             runCatching { api.home(snapshot.homeType, snapshot.locale.backendTag) }
                 .propagateCancellation()
