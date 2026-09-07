@@ -718,6 +718,10 @@ private fun HomeContent(feed: HomeFeed, state: SmartMovieState, copy: UiStrings,
     ) {
         item {
             MediaTypeChips(state.homeType, copy, controller::changeHomeType)
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(top = 10.dp)) {
+                FilterChip(selected = state.trendingWindow == "day", onClick = { controller.changeTrendingWindow("day") }, label = { Text("Today") })
+                FilterChip(selected = state.trendingWindow == "week", onClick = { controller.changeTrendingWindow("week") }, label = { Text("This week") })
+            }
         }
         feed.hero?.let { hero ->
             item { HeroCard(hero, images, copy) { controller.openDetail(hero) } }
@@ -730,6 +734,16 @@ private fun HomeContent(feed: HomeFeed, state: SmartMovieState, copy: UiStrings,
                         items(section.items.distinctBy(TitleSummary::libraryKey), key = { it.libraryKey }) { title ->
                             PosterCard(title, images, typeLabel(title.mediaType, copy), { controller.openDetail(title) })
                         }
+                    }
+                }
+            }
+        }
+        if (state.trending.isNotEmpty()) item {
+            Column(verticalArrangement = Arrangement.spacedBy(15.dp)) {
+                SectionTitle(if (state.trendingWindow == "day") "Trending today" else "Trending this week")
+                LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                    items(state.trending.distinctBy(TitleSummary::libraryKey), key = { it.libraryKey }) { title ->
+                        PosterCard(title, images, typeLabel(title.mediaType, copy), { controller.openDetail(title) })
                     }
                 }
             }

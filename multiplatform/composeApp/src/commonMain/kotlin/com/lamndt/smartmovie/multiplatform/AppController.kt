@@ -107,6 +107,8 @@ data class SmartMovieState(
     val imageConfiguration: ImageConfiguration = ImageConfiguration.Fallback,
     val homeType: MediaType = MediaType.MOVIE,
     val home: LoadState<HomeFeed> = LoadState.Idle,
+    val trendingWindow: String = "week",
+    val trending: List<TitleSummary> = emptyList(),
     val exploreType: MediaType = MediaType.MOVIE,
     val exploreFilter: DiscoverFilter = DiscoverFilter(),
     val exploreDraftFilter: DiscoverFilter = DiscoverFilter(),
@@ -274,6 +276,12 @@ class AppController(
     fun setSeasonWatched(seriesId: Int, season: Int, episodes: Collection<Int>, watched: Boolean) =
         episodeProgress.setSeason(seriesId, season, episodes, watched)
 
+    fun changeTrendingWindow(window: String) {
+        if (window !in setOf("day", "week") || window == state.value.trendingWindow) return
+        mutableState.update { it.copy(trendingWindow = window) }
+        reloadHome()
+    }
+
     fun changeLocale(locale: AppLocale) {
         if (locale == state.value.locale) return
         accountListSearchJob?.cancel()
@@ -312,7 +320,13 @@ class AppController(
             val snapshot = state.value
             runCatching { api.home(snapshot.homeType, snapshot.locale.backendTag) }
                 .propagateCancellation()
-                .onSuccess { feed -> mutableState.update { it.copy(home = LoadState.Content(feed)) } }
+                .onSuccess { feed ->
+                    val titles = runCatching {
+                        api.trending(snapshot.homeType.wireValue, snapshot.trendingWindow, 1, snapshot.locale.backendTag, snapshot.adultUnlocked)
+                            .results.mapNotNull { (it as? CatalogEntity.Title)?.value }
+                    }.getOrDefault(emptyList())
+                    mutableState.update { it.copy(home = LoadState.Content(feed), trending = titles) }
+                }
                 .onFailure { failure -> mutableState.update { it.copy(home = LoadState.Error(failure.message.orEmpty())) } }
         }
     }
