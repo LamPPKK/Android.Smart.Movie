@@ -20,6 +20,7 @@ import kotlinx.coroutines.launch
 
 data class HomeUiState(
     val mediaType: MediaType = MediaType.MOVIE,
+    val trendingWindow: String = "week",
     val feed: Loadable<HomeFeed> = Loadable.Idle,
     val trending: Loadable<List<TitleSummary>> = Loadable.Idle,
 )
@@ -40,6 +41,12 @@ class HomeViewModel(
         refresh()
     }
 
+    fun selectTrendingWindow(window: String) {
+        if (window !in setOf("day", "week") || window == mutableState.value.trendingWindow) return
+        mutableState.update { it.copy(trendingWindow = window) }
+        refresh()
+    }
+
     fun refresh() {
         loadJob?.cancel()
         loadJob = viewModelScope.launch {
@@ -47,7 +54,7 @@ class HomeViewModel(
             try {
                 val result = catalog.home(mutableState.value.mediaType, language)
                 val trending = (catalog as? CatalogV2Repository)?.let {
-                    runCatching { it.trending(mutableState.value.mediaType.wireValue, "week", 1, language, false) }
+                    runCatching { it.trending(mutableState.value.mediaType.wireValue, mutableState.value.trendingWindow, 1, language, false) }
                         .getOrNull()?.results.orEmpty().mapNotNull { (it as? CatalogEntity.Title)?.value }
                 }.orEmpty()
                 mutableState.update { it.copy(feed = Loadable.Loaded(result), trending = Loadable.Loaded(trending)) }

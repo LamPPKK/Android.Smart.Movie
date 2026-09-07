@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.Button
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -67,7 +68,7 @@ fun HomeRoute(
     homeViewModel: HomeViewModel = viewModel(factory = HomeViewModel.factory(catalog, language)),
 ) {
     val state by homeViewModel.state.collectAsStateWithLifecycle()
-    HomeScreen(state, images, homeViewModel::selectMediaType, homeViewModel::refresh, onTitleClick, modifier)
+    HomeScreen(state, images, homeViewModel::selectMediaType, homeViewModel::selectTrendingWindow, homeViewModel::refresh, onTitleClick, modifier)
 }
 
 @Composable
@@ -75,6 +76,7 @@ fun HomeScreen(
     state: HomeUiState,
     images: ImageUrlFactory,
     onMediaType: (MediaType) -> Unit,
+    onTrendingWindow: (String) -> Unit,
     onRetry: () -> Unit,
     onTitleClick: (TitleSummary) -> Unit,
     modifier: Modifier = Modifier,
@@ -94,6 +96,10 @@ fun HomeScreen(
                 )
                 Spacer(Modifier.height(14.dp))
                 MediaTypeSelector(state.mediaType, onMediaType, Modifier.width(330.dp).fillMaxWidth())
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    FilterChip(selected = state.trendingWindow == "day", onClick = { onTrendingWindow("day") }, label = { Text(stringResource(R.string.trending_day)) })
+                    FilterChip(selected = state.trendingWindow == "week", onClick = { onTrendingWindow("week") }, label = { Text(stringResource(R.string.trending_week)) })
+                }
             }
         }
         when (val feed = state.feed) {
