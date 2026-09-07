@@ -105,7 +105,21 @@ fun HomeScreen(
                     retry = onRetry,
                 )
             }
-            is Loadable.Loaded -> homeFeed(feed.value, images, onTitleClick, horizontalPadding)
+            is Loadable.Loaded -> {
+                homeFeed(feed.value, images, onTitleClick, horizontalPadding)
+                val trending = (state.trending as? Loadable.Loaded<List<TitleSummary>>)?.value.orEmpty()
+                if (trending.isNotEmpty()) item {
+                    SectionTitle(stringResource(R.string.trending), Modifier.padding(horizontal = horizontalPadding))
+                    LazyRow(
+                        contentPadding = PaddingValues(horizontal = horizontalPadding),
+                        horizontalArrangement = Arrangement.spacedBy(14.dp),
+                    ) {
+                        items(trending, key = { it.libraryKey }) { title ->
+                            PosterCard(title, images.url(title.posterPath, ImageKind.POSTER), { onTitleClick(title) })
+                        }
+                    }
+                }
+            }
         }
     }
 }

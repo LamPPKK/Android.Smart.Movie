@@ -4,9 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.lamndt.smartmovie.model.CatalogRepository
+import com.lamndt.smartmovie.model.CatalogV2Repository
 import com.lamndt.smartmovie.model.HomeFeed
 import com.lamndt.smartmovie.model.Loadable
 import com.lamndt.smartmovie.model.MediaType
+import com.lamndt.smartmovie.model.TitleSummary
+import com.lamndt.smartmovie.model.CatalogEntity
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,6 +21,7 @@ import kotlinx.coroutines.launch
 data class HomeUiState(
     val mediaType: MediaType = MediaType.MOVIE,
     val feed: Loadable<HomeFeed> = Loadable.Idle,
+    val trending: Loadable<List<TitleSummary>> = Loadable.Idle,
 )
 
 class HomeViewModel(
@@ -42,7 +46,11 @@ class HomeViewModel(
             mutableState.update { it.copy(feed = Loadable.Loading) }
             try {
                 val result = catalog.home(mutableState.value.mediaType, language)
-                mutableState.update { it.copy(feed = Loadable.Loaded(result)) }
+                val trending = (catalog as? CatalogV2Repository)?.let {
+                    runCatching { it.trending(mutableState.value.mediaType.wireValue, "week", 1, language, false) }
+                        .getOrNull()?.results.orEmpty().mapNotNull { (it as? CatalogEntity.Title)?.value }
+                }.orEmpty()
+                mutableState.update { it.copy(feed = Loadable.Loaded(result), trending = Loadable.Loaded(trending)) }
             } catch (cancelled: CancellationException) {
                 throw cancelled
             } catch (failure: Throwable) {
