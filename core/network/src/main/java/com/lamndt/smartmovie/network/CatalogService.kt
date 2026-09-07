@@ -180,6 +180,10 @@ internal interface CatalogService {
     @GET("v2/account/profile") suspend fun profile(
         @Header(CLIENT_HEADER) clientId: String, @Header("Authorization") authorization: String,
     ): AccountProfile
+    @GET("v2/account/profile/{accountId}") suspend fun accountDetails(
+        @Header(CLIENT_HEADER) clientId: String, @Header("Authorization") authorization: String,
+        @Path("accountId") accountId: Int,
+    ): AccountProfile
     @GET("v2/account/state/{mediaType}/{id}") suspend fun accountState(
         @Header(CLIENT_HEADER) clientId: String, @Header("Authorization") authorization: String,
         @Path("mediaType") mediaType: String, @Path("id") id: Int,

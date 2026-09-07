@@ -58,6 +58,7 @@ interface AccountRepository {
     suspend fun authAttempt(id: String, deviceCode: String?): String
     suspend fun completeAuth(id: String, deviceCode: String?): AuthSession
     suspend fun profile(): AccountProfile
+    suspend fun accountDetails(accountId: Int): AccountProfile = profile()
     suspend fun accountState(mediaType: MediaType, mediaId: Int): TitleAccountState
     suspend fun episodeAccountState(seriesId: Int, season: Int, episode: Int): EpisodeAccountState
     suspend fun logout()

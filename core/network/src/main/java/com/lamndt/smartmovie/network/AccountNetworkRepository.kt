@@ -57,6 +57,11 @@ class AccountNetworkRepository(
 
     override suspend fun profile(): AccountProfile = service.profile(clientIdProvider(), authorization())
 
+    override suspend fun accountDetails(accountId: Int): AccountProfile {
+        require(accountId > 0) { "accountId must be positive" }
+        return service.accountDetails(clientIdProvider(), authorization(), accountId)
+    }
+
     override suspend fun accountState(mediaType: MediaType, mediaId: Int): TitleAccountState =
         service.accountState(clientIdProvider(), authorization(), mediaType.wireValue, mediaId)
 
