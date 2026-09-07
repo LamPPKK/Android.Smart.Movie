@@ -1436,6 +1436,15 @@ private fun EntityDetailContent(
         if (detail is EntityDetail.Season && detail.value.episodes.isNotEmpty()) item {
             Column(Modifier.padding(horizontal = 28.dp, vertical = 18.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 SectionTitle(entityKindLabel(EntityKind.EPISODE, state.locale))
+                val nextEpisode = detail.value.episodes.firstOrNull {
+                    "${it.seriesId}:${it.seasonNumber}:${it.episodeNumber}" !in state.watchedEpisodeKeys
+                }
+                nextEpisode?.let { episode ->
+                    Button(onClick = { controller.openEntity(CatalogEntity.Episode(episode)) }) {
+                        Icon(Icons.Default.PlayArrow, contentDescription = null)
+                        Text("Continue with episode", modifier = Modifier.padding(start = 8.dp))
+                    }
+                }
                 detail.value.episodes.forEach { episode ->
                     Surface(
                         modifier = Modifier.fillMaxWidth().clickable { controller.openEntity(CatalogEntity.Episode(episode)) },
