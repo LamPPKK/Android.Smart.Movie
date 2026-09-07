@@ -125,7 +125,7 @@ class KtorCatalogApi(
     }
 
     override suspend fun genres(mediaType: MediaType, language: String): List<Genre> = request<GenreEnvelope> {
-        client.get("$root/v1/genres/${mediaType.wireValue}") {
+        client.get("$root/v2/genres/${mediaType.wireValue}") {
             smartMovieHeaders()
             parameter("language", language)
         }
