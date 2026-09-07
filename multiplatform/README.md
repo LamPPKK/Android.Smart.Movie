@@ -53,6 +53,8 @@ To exercise the Web client with live Worker responses and TMDb artwork, configur
 
 The current Home, Explore, Search, Detail, Library, Profile and expanded-layout captures are documented in the repository [screen gallery](../docs/SCREENSHOTS.md).
 
+The latest local gate (8 September 2026) passed `:composeApp:desktopTest`, `:composeApp:compileKotlinDesktop`, `:composeApp:jsBrowserDevelopmentExecutableDistribution`, and `:composeApp:wasmJsBrowserDistribution`. The production Wasm bundle completed successfully; JavaScript development packaging remains the fast preview path while production Webpack stays a CI performance check.
+
 ## Release boundaries
 
 - Web hosting must serve `.wasm` with `application/wasm`; production must configure CORS, browser callback allowlist, secure cookies, and CSRF.
