@@ -46,7 +46,7 @@ internal interface CatalogService {
         @Query("language") language: String,
     ): HomeFeed
 
-    @GET("v1/genres/{mediaType}")
+    @GET("v2/genres/{mediaType}")
     suspend fun genres(
         @Header(CLIENT_HEADER) clientId: String,
         @Path("mediaType") mediaType: String,
