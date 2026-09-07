@@ -36,6 +36,7 @@ interface AccountApi {
     suspend fun authAttempt(id: String, deviceCode: String?): String
     suspend fun completeAuth(id: String, deviceCode: String?): AuthSession
     suspend fun profile(): AccountProfile
+    suspend fun accountDetails(accountId: Int): AccountProfile = profile()
     suspend fun accountState(mediaType: MediaType, id: Int): TitleAccountState
     suspend fun episodeAccountState(seriesId: Int, season: Int, episode: Int): EpisodeAccountState
     suspend fun refreshCSRF(): String
@@ -97,6 +98,13 @@ class KtorAccountApi(
         }
         if (csrfToken == null) runCatching { refreshCSRF() }
         return profile
+    }
+
+    override suspend fun accountDetails(accountId: Int): AccountProfile {
+        require(accountId > 0) { "accountId must be positive" }
+        return response {
+            client.get("$root/v2/account/profile/$accountId") { headers(authenticated = true) }
+        }
     }
 
     override suspend fun accountState(mediaType: MediaType, id: Int): TitleAccountState = response {
