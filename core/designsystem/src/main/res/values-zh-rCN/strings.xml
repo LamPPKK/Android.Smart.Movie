@@ -87,4 +87,5 @@
     <string name="runtime">时长</string>
     <string name="production_code">制作代码</string>
     <string name="votes">投票数</string>
+    <string name="episode_progress">剧集进度</string><string name="mark_as_watched">标记为已看</string><string name="mark_as_unwatched">标记为未看</string><string name="mark_season_watched">标记本季已看</string><string name="mark_season_unwatched">取消本季已看</string><string name="watched_progress">已看 %1$d/%2$d</string>
 </resources>

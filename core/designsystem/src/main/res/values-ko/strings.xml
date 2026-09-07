@@ -87,4 +87,5 @@
     <string name="runtime">재생 시간</string>
     <string name="production_code">제작 코드</string>
     <string name="votes">투표 수</string>
+    <string name="episode_progress">에피소드 진행률</string><string name="mark_as_watched">시청 완료</string><string name="mark_as_unwatched">시청 취소</string><string name="mark_season_watched">시즌 시청 완료</string><string name="mark_season_unwatched">시즌 시청 취소</string><string name="watched_progress">%2$d개 중 %1$d개 시청</string>
 </resources>
