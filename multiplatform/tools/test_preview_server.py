@@ -52,7 +52,8 @@ class PreviewImagesTests(unittest.TestCase):
         for route in (
             "/v1/home", "/v1/home?media_type=tv", "/v1/titles/movie/550",
             "/v1/discover/movie", "/v1/search?query=club",
-            "/v2/home", "/v2/home?media_type=tv", "/v2/titles/movie/550", "/v2/titles/tv/1396", "/v2/discover/tv",
+            "/v2/home", "/v2/home?media_type=tv", "/v2/titles/movie/550", "/v2/titles/movie/550/images",
+            "/v2/titles/tv/1396", "/v2/tv/1396/seasons/1", "/v2/tv/1396/seasons/1/episodes/1", "/v2/credits/abc", "/v2/discover/tv",
             "/v2/trending/all/week", "/v2/search?query=club",
         ):
             with self.subTest(route=route):
@@ -75,6 +76,11 @@ class PreviewImagesTests(unittest.TestCase):
                             body = response.read()
                             self.assertEqual(body[:8], b"\x89PNG\r\n\x1a\n")
                             self.assertEqual(len(body), int(response.headers["Content-Length"]))
+
+    def test_entity_routes_return_typed_contract_fixtures(self):
+        for route, kind in (("/v2/entities/person/1", "person"), ("/v2/entities/collection/2", "collection")):
+            with self.subTest(route=route):
+                self.assertEqual(self.get_json(route)["entity_kind"], kind)
 
     def test_fixture_mapping_preserves_null_unknown_fields_and_original(self):
         original = contract_fixture("title-detail")

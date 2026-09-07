@@ -192,10 +192,30 @@ class PreviewHandler(SimpleHTTPRequestHandler):
                 "total_pages": 1,
                 "results": [{"entity_kind": item["media_type"], **item} for item in results],
             }
+        elif path.startswith("/v2/entities/"):
+            kind = path.split("/")[3]
+            if kind == "person":
+                payload = contract_fixture("person")
+            elif kind == "collection":
+                payload = contract_fixture("collection")
+            else:
+                summaries = contract_fixture("entities")["results"]
+                payload = next((item for item in summaries if item.get("entity_kind") == kind), summaries[0])
+        elif path.startswith("/v2/tv/") and "/seasons/" in path:
+            parts = path.split("/")
+            payload = contract_fixture("episode" if len(parts) >= 8 else "season")
+        elif path.startswith("/v2/credits/"):
+            payload = contract_fixture("credit-detail")
         elif path.startswith("/v2/titles/"):
             parts = path.split("/")
-            route_type = parts[-2]
-            identifier = int(parts[-1])
+            route_type = parts[3]
+            if len(parts) >= 6:
+                resource = parts[5].replace("-", "_")
+                deep = contract_fixture("title-detail")
+                payload = deep.get(resource, deep)
+                self.send_json(payload)
+                return
+            identifier = int(parts[4])
             summary = next((item for item in TITLES if item["id"] == identifier), TITLES[0])
             deep = contract_fixture("title-detail")
             payload = {
