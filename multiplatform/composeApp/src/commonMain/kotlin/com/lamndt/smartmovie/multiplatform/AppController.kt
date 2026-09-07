@@ -322,8 +322,9 @@ class AppController(
                 .propagateCancellation()
                 .onSuccess { feed ->
                     val titles = runCatching {
-                        api.trending(snapshot.homeType.wireValue, snapshot.trendingWindow, 1, snapshot.locale.backendTag, snapshot.adultUnlocked)
-                            .results.mapNotNull { (it as? CatalogEntity.Title)?.value }
+                        (api as? CatalogApiV2)?.trending(snapshot.homeType.wireValue, snapshot.trendingWindow, 1, snapshot.locale.backendTag, snapshot.adultUnlocked)
+                            ?.results.orEmpty()
+                            .mapNotNull { (it as? CatalogEntity.Title)?.value }
                     }.getOrDefault(emptyList())
                     mutableState.update { it.copy(home = LoadState.Content(feed), trending = titles) }
                 }

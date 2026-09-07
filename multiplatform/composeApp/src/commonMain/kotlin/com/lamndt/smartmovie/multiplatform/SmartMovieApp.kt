@@ -1442,7 +1442,7 @@ private fun EntityDetailContent(
                 nextEpisode?.let { episode ->
                     Button(onClick = { controller.openEntity(CatalogEntity.Episode(episode)) }) {
                         Icon(Icons.Default.PlayArrow, contentDescription = null)
-                        Text("Continue with episode", modifier = Modifier.padding(start = 8.dp))
+                        Text(continueEpisodeLabel(state.locale), modifier = Modifier.padding(start = 8.dp))
                     }
                 }
                 detail.value.episodes.forEach { episode ->
@@ -1511,6 +1511,15 @@ private fun EntityDetailContent(
             }
         }
     }
+}
+
+private fun continueEpisodeLabel(locale: AppLocale): String = when (locale) {
+    AppLocale.ENGLISH -> "Continue with episode"
+    AppLocale.VIETNAMESE -> "Tiếp tục với tập phim"
+    AppLocale.JAPANESE -> "エピソードを続ける"
+    AppLocale.KOREAN -> "에피소드 계속 보기"
+    AppLocale.CHINESE_SIMPLIFIED -> "继续观看剧集"
+    AppLocale.CHINESE_TRADITIONAL -> "繼續觀看劇集"
 }
 
 private fun creditTitle(credit: com.lamndt.smartmovie.multiplatform.model.Credit): TitleSummary? {
