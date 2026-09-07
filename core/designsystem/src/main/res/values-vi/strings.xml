@@ -91,7 +91,7 @@
     <string name="runtime">Thời lượng</string>
     <string name="production_code">Mã sản xuất</string>
     <string name="votes">Lượt đánh giá</string>
-    <string name="episode_progress">Tiến độ tập</string>
+    <string name="episode_progress">Tiến độ tập</string><string name="continue_with_episode">Tiếp tục với tập phim</string>
     <string name="mark_as_watched">Đã xem</string>
     <string name="mark_as_unwatched">Bỏ đã xem</string>
     <string name="mark_season_watched">Đánh dấu mùa đã xem</string>

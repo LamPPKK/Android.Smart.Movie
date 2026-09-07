@@ -104,6 +104,7 @@
     <string name="mark_as_unwatched">Mark unwatched</string>
     <string name="mark_season_watched">Mark season watched</string>
     <string name="mark_season_unwatched">Mark season unwatched</string>
+    <string name="continue_with_episode">Continue with episode</string>
     <string name="watched_progress">Watched %1$d of %2$d</string>
     <string name="where_to_watch">Where to watch</string>
     <string name="justwatch_attribution">Availability data by JustWatch</string>

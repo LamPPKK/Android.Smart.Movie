@@ -263,6 +263,14 @@ private fun SeasonContent(
                         scope.launch { repository.setSeasonWatched(value.seriesId, value.seasonNumber, episodeNumbers, !seasonWatched) }
                     }
                 }) { Text(stringResource(if (seasonWatched) R.string.mark_season_unwatched else R.string.mark_season_watched)) }
+                if (!seasonWatched) {
+                    val next = value.episodes.firstOrNull { it.episodeNumber !in watched }
+                    next?.let { episode ->
+                        OutlinedButton(onClick = { onEntity(CatalogEntity.Episode(episode)) }) {
+                            Text(stringResource(R.string.continue_with_episode))
+                        }
+                    }
+                }
             }
         }
         item { CatalogMediaSection(value.images, value.videos, images) }
