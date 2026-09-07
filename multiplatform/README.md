@@ -49,6 +49,8 @@ Open `http://127.0.0.1:8099/?preview=1`. The server supplies deterministic, cont
 
 The preview's `/artwork/` configuration points to generated abstract demo images, not actual TMDb posters/portraits. Nested fixture paths are mapped to available local assets; canonical fixtures are unchanged. Run `python3 -B -m unittest discover -s tools -p 'test_*.py' -v` to verify complete PNG responses for every advertised size, missing-image 404 and account 401. These checks are part of Compose Multiplatform CI and do not prove production Worker/CDN availability.
 
+To exercise the Web client with live Worker responses and TMDb artwork, configure `TMDB_BEARER_TOKEN` in the Worker development environment, start `npm run dev` from `backend/worker`, build the Wasm distribution, then run `python3 tools/live_catalog_server.py` from this directory. Open `http://127.0.0.1:8100/?preview=1`. The live server proxies public `/v1` and `/v2` responses without rewriting image paths; it intentionally rejects account/auth routes and returns a clear 502 when the Worker is unavailable. Never commit the token or use this mode as a production deployment.
+
 The current Home, Explore, Search, Detail, Library, Profile and expanded-layout captures are documented in the repository [screen gallery](../docs/SCREENSHOTS.md).
 
 ## Release boundaries
