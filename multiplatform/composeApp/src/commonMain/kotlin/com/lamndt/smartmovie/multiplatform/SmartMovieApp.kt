@@ -1381,7 +1381,7 @@ private fun EntityDetailContent(
                 val episodes = detail.value.episodes.map { it.episodeNumber }.distinct()
                 val watchedCount = episodes.count { "${detail.value.seriesId}:${detail.value.seasonNumber}:$it" in state.watchedEpisodeKeys }
                 Text(mediaCopy.episodeProgress, style = MaterialTheme.typography.titleLarge)
-                Text(mediaCopy.watchedProgress.replace("%1$d", watchedCount.toString()).replace("%2$d", episodes.size.toString()), color = CinemaColors.Muted)
+                Text(mediaCopy.watchedProgress.replace("%1${'$'}d", watchedCount.toString()).replace("%2${'$'}d", episodes.size.toString()), color = CinemaColors.Muted)
                 Button(
                     onClick = { controller.setSeasonWatched(detail.value.seriesId, detail.value.seasonNumber, episodes, watchedCount != episodes.size) },
                     enabled = episodes.isNotEmpty(),
@@ -1957,23 +1957,23 @@ private data class MediaCopy(
 private fun mediaCopy(locale: AppLocale): MediaCopy = when (locale) {
     AppLocale.ENGLISH -> MediaCopy(
         "Details", "Images", "Videos", "TMDb catalog image", "Air date", "Episodes", "Runtime",
-        "Production code", "Rating", "Votes", "%d min", "External identifiers", "Episode progress", "Watched %1$d of %2$d", "Mark watched", "Mark unwatched", "Mark season watched", "Mark season unwatched",
+        "Production code", "Rating", "Votes", "%d min", "External identifiers", "Episode progress", "Watched %1${'$'}d of %2${'$'}d", "Mark watched", "Mark unwatched", "Mark season watched", "Mark season unwatched",
     )
     AppLocale.VIETNAMESE -> MediaCopy(
         "Chi tiết", "Hình ảnh", "Video", "Hình ảnh danh mục TMDb", "Ngày phát sóng", "Tập phim", "Thời lượng",
-        "Mã sản xuất", "Điểm đánh giá", "Lượt đánh giá", "%d phút", "Định danh bên ngoài", "Tiến độ tập", "Đã xem %1$d/%2$d", "Đã xem", "Bỏ đã xem", "Đánh dấu mùa đã xem", "Bỏ đánh dấu mùa",
+        "Mã sản xuất", "Điểm đánh giá", "Lượt đánh giá", "%d phút", "Định danh bên ngoài", "Tiến độ tập", "Đã xem %1${'$'}d/%2${'$'}d", "Đã xem", "Bỏ đã xem", "Đánh dấu mùa đã xem", "Bỏ đánh dấu mùa",
     )
     AppLocale.JAPANESE -> MediaCopy(
-        "詳細", "画像", "動画", "TMDbカタログ画像", "放送日", "エピソード", "上映時間", "制作コード", "評価", "投票数", "%d分", "外部識別子", "エピソードの進捗", "%1$d/%2$d 話を視聴済み", "視聴済みにする", "未視聴に戻す", "シーズンを視聴済みにする", "シーズンを未視聴に戻す",
+        "詳細", "画像", "動画", "TMDbカタログ画像", "放送日", "エピソード", "上映時間", "制作コード", "評価", "投票数", "%d分", "外部識別子", "エピソードの進捗", "%1${'$'}d/%2${'$'}d 話を視聴済み", "視聴済みにする", "未視聴に戻す", "シーズンを視聴済みにする", "シーズンを未視聴に戻す",
     )
     AppLocale.KOREAN -> MediaCopy(
-        "세부 정보", "이미지", "동영상", "TMDb 카탈로그 이미지", "방영일", "에피소드", "재생 시간", "제작 코드", "평점", "투표 수", "%d분", "외부 식별자", "에피소드 진행률", "%1$d개 중 %2$d개 시청", "시청 완료", "시청 취소", "시즌 시청 완료", "시즌 시청 취소",
+        "세부 정보", "이미지", "동영상", "TMDb 카탈로그 이미지", "방영일", "에피소드", "재생 시간", "제작 코드", "평점", "투표 수", "%d분", "외부 식별자", "에피소드 진행률", "%1${'$'}d개 중 %2${'$'}d개 시청", "시청 완료", "시청 취소", "시즌 시청 완료", "시즌 시청 취소",
     )
     AppLocale.CHINESE_SIMPLIFIED -> MediaCopy(
-        "详细信息", "图片", "视频", "TMDb 目录图片", "播出日期", "剧集", "时长", "制作代码", "评分", "投票数", "%d 分钟", "外部标识符", "剧集进度", "已看 %1$d/%2$d", "标记为已看", "标记为未看", "标记本季已看", "取消本季已看",
+        "详细信息", "图片", "视频", "TMDb 目录图片", "播出日期", "剧集", "时长", "制作代码", "评分", "投票数", "%d 分钟", "外部标识符", "剧集进度", "已看 %1${'$'}d/%2${'$'}d", "标记为已看", "标记为未看", "标记本季已看", "取消本季已看",
     )
     AppLocale.CHINESE_TRADITIONAL -> MediaCopy(
-        "詳細資料", "圖片", "影片", "TMDb 目錄圖片", "播出日期", "集數", "片長", "製作代碼", "評分", "投票數", "%d 分鐘", "外部識別碼", "劇集進度", "已看 %1$d/%2$d", "標記為已看", "標記為未看", "標記本季已看", "取消本季已看",
+        "詳細資料", "圖片", "影片", "TMDb 目錄圖片", "播出日期", "集數", "片長", "製作代碼", "評分", "投票數", "%d 分鐘", "外部識別碼", "劇集進度", "已看 %1${'$'}d/%2${'$'}d", "標記為已看", "標記為未看", "標記本季已看", "取消本季已看",
     )
 }
 
