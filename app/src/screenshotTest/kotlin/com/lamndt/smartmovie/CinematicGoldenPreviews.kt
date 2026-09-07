@@ -19,14 +19,14 @@ import com.lamndt.smartmovie.model.TitleSummary
 @Preview(name = "phone_compact", widthDp = 390, heightDp = 844, locale = "en")
 @Composable
 fun PhoneHomeGolden() = GoldenTheme {
-    HomeScreen(HomeUiState(feed = Loadable.Loaded(goldenFeed)), goldenImages, {}, {}, {})
+    HomeScreen(HomeUiState(feed = Loadable.Loaded(goldenFeed)), goldenImages, {}, {}, {}, {})
 }
 
 @PreviewTest
 @Preview(name = "tablet_expanded", widthDp = 1280, heightDp = 800, locale = "en")
 @Composable
 fun TabletHomeGolden() = GoldenTheme {
-    HomeScreen(HomeUiState(feed = Loadable.Loaded(goldenFeed)), goldenImages, {}, {}, {})
+    HomeScreen(HomeUiState(feed = Loadable.Loaded(goldenFeed)), goldenImages, {}, {}, {}, {})
 }
 
 @PreviewTest
