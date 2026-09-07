@@ -82,6 +82,21 @@ class PreviewImagesTests(unittest.TestCase):
             with self.subTest(route=route):
                 self.assertEqual(self.get_json(route)["entity_kind"], kind)
 
+    def test_search_supports_every_catalog_discriminator(self):
+        for scope, query, kind in (
+            ("movie", "Fight", "movie"),
+            ("tv", "Breaking", "tv"),
+            ("person", "Example", "person"),
+            ("collection", "Example", "collection"),
+            ("company", "Example", "company"),
+            ("network", "Example", "network"),
+            ("keyword", "example", "keyword"),
+        ):
+            with self.subTest(scope=scope):
+                results = self.get_json(f"/v2/search?scope={scope}&query={query}")["results"]
+                self.assertTrue(results)
+                self.assertTrue(all(item["entity_kind"] == kind for item in results))
+
     def test_fixture_mapping_preserves_null_unknown_fields_and_original(self):
         original = contract_fixture("title-detail")
         mapped = preview_artwork(original)

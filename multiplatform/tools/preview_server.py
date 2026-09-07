@@ -186,11 +186,27 @@ class PreviewHandler(SimpleHTTPRequestHandler):
             }
         elif path == "/v2/search":
             term = query.get("query", [""])[0].lower()
-            results = [item for item in TITLES if term in item["title"].lower()]
+            scope = query.get("scope", ["all"])[0]
+            if scope in {"movie", "tv"}:
+                results = [item for item in TITLES if item["media_type"] == scope and term in item["title"].lower()]
+            else:
+                entity_results = contract_fixture("entities")["results"]
+                results = [
+                    item for item in entity_results
+                    if term in (item.get("title") or item.get("name") or "").lower()
+                    and (scope == "all" or item.get("entity_kind") == scope)
+                ]
+                if scope == "all":
+                    results = [*[
+                        item for item in TITLES if term in item["title"].lower()
+                    ], *results]
             payload = {
                 "page": 1,
                 "total_pages": 1,
-                "results": [{"entity_kind": item["media_type"], **item} for item in results],
+                "results": [
+                    {"entity_kind": item["media_type"], **item} if "media_type" in item else item
+                    for item in results
+                ],
             }
         elif path.startswith("/v2/entities/"):
             kind = path.split("/")[3]
