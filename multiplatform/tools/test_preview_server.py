@@ -101,6 +101,13 @@ class PreviewImagesTests(unittest.TestCase):
         self.assertTrue(self.get_json("/v2/genres/movie")["genres"])
         self.assertTrue(self.get_json("/v2/find/tt0133093")["results"])
 
+    def test_discover_preserves_requested_media_type(self):
+        for media_type in ("movie", "tv"):
+            with self.subTest(media_type=media_type):
+                results = self.get_json(f"/v2/discover/{media_type}")["results"]
+                self.assertTrue(results)
+                self.assertTrue(all(item["media_type"] == media_type for item in results))
+
     def test_fixture_mapping_preserves_null_unknown_fields_and_original(self):
         original = contract_fixture("title-detail")
         mapped = preview_artwork(original)

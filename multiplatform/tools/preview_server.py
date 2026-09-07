@@ -179,7 +179,7 @@ class PreviewHandler(SimpleHTTPRequestHandler):
         elif path.startswith("/v2/discover/"):
             route_type = path.rsplit("/", 1)[-1]
             results = [item for item in TITLES if item["media_type"] == route_type]
-            payload = {"page": 1, "total_pages": 1, "results": unique_titles(results + TITLES)}
+            payload = {"page": 1, "total_pages": 1, "results": unique_titles(results)}
         elif path.startswith("/v2/trending/"):
             kind = path.split("/")[3]
             results = TITLES if kind == "all" else [item for item in TITLES if item["media_type"] == kind]
