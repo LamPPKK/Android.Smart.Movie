@@ -206,3 +206,23 @@ class PersistentLibrary(
         private const val OUTBOX_KEY = "smartmovie_library_outbox_v1"
     }
 }
+
+class PersistentEpisodeProgress(private val store: KeyValueStore) {
+    private val mutableWatched = MutableStateFlow(read())
+    val watched: StateFlow<Set<String>> = mutableWatched.asStateFlow()
+
+    fun setWatched(key: String, watched: Boolean) {
+        val next = mutableWatched.value.toMutableSet().apply { if (watched) add(key) else remove(key) }.toSet()
+        mutableWatched.value = next
+        store.putString(STORE_KEY, next.sorted().joinToString("\n"))
+    }
+
+    fun setSeason(seriesId: Int, season: Int, episodes: Collection<Int>, watched: Boolean) {
+        episodes.forEach { setWatched("$seriesId:$season:$it", watched) }
+    }
+
+    private fun read(): Set<String> = store.getString(STORE_KEY).orEmpty().lineSequence()
+        .map(String::trim).filter { it.matches(Regex("\\d+:\\d+:\\d+")) }.toSet()
+
+    private companion object { const val STORE_KEY = "smartmovie.episode_progress.v1" }
+}

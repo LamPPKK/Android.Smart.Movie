@@ -9,6 +9,7 @@ import com.lamndt.smartmovie.multiplatform.data.KtorCatalogApi
 import com.lamndt.smartmovie.multiplatform.data.LibraryCollection
 import com.lamndt.smartmovie.multiplatform.data.LibraryRecord
 import com.lamndt.smartmovie.multiplatform.data.PersistentLibrary
+import com.lamndt.smartmovie.multiplatform.data.PersistentEpisodeProgress
 import com.lamndt.smartmovie.multiplatform.data.PersistentAccountMutationOutbox
 import com.lamndt.smartmovie.multiplatform.data.PendingAccountMutation
 import com.lamndt.smartmovie.multiplatform.data.ListItemMutation
@@ -153,6 +154,7 @@ data class SmartMovieState(
     val adultUnlocked: Boolean = false,
     val adultFailures: Int = 0,
     val adultLockUntil: Long = 0,
+    val watchedEpisodeKeys: Set<String> = emptySet(),
 )
 
 data class AccountRatingState(
@@ -170,6 +172,7 @@ class AppController(
     private val nowMillis: () -> Long = ::systemTimeMillis,
 ) {
     private val library = PersistentLibrary(store)
+    private val episodeProgress = PersistentEpisodeProgress(store)
     private val accountOutbox = PersistentAccountMutationOutbox(store)
     private val clientId = store.getString(INSTALLATION_ID_KEY)
         ?.takeIf { it.length == 36 }
@@ -203,6 +206,7 @@ class AppController(
     init {
         syncExploreContext(reload = false)
         scope.launch { library.records.collect { records -> mutableState.update { it.copy(library = records) } } }
+        scope.launch { episodeProgress.watched.collect { keys -> mutableState.update { it.copy(watchedEpisodeKeys = keys) } } }
         scope.launch {
             val configuration = runCatching { api.imageConfiguration() }
                 .propagateCancellation()
@@ -263,6 +267,12 @@ class AppController(
             state.value.accountRecommendations is LoadState.Idle
         ) refreshRecommendations()
     }
+
+    fun setEpisodeWatched(seriesId: Int, season: Int, episode: Int, watched: Boolean) =
+        episodeProgress.setWatched("$seriesId:$season:$episode", watched)
+
+    fun setSeasonWatched(seriesId: Int, season: Int, episodes: Collection<Int>, watched: Boolean) =
+        episodeProgress.setSeason(seriesId, season, episodes, watched)
 
     fun changeLocale(locale: AppLocale) {
         if (locale == state.value.locale) return
