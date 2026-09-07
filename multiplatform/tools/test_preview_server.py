@@ -97,6 +97,10 @@ class PreviewImagesTests(unittest.TestCase):
                 self.assertTrue(results)
                 self.assertTrue(all(item["entity_kind"] == kind for item in results))
 
+    def test_genres_and_external_id_routes_return_contract_data(self):
+        self.assertTrue(self.get_json("/v2/genres/movie")["genres"])
+        self.assertTrue(self.get_json("/v2/find/tt0133093")["results"])
+
     def test_fixture_mapping_preserves_null_unknown_fields_and_original(self):
         original = contract_fixture("title-detail")
         mapped = preview_artwork(original)

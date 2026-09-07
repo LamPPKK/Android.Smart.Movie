@@ -172,6 +172,10 @@ class PreviewHandler(SimpleHTTPRequestHandler):
                 "backdrop_sizes": ["w780", "w1280", "original"],
                 "profile_sizes": ["w185", "h632", "original"],
             }
+        elif path.startswith("/v2/genres/"):
+            payload = {"genres": [{"id": 18, "name": "Drama"}, {"id": 28, "name": "Action"}, {"id": 53, "name": "Thriller"}]}
+        elif path.startswith("/v2/find/"):
+            payload = contract_fixture("find")
         elif path.startswith("/v2/discover/"):
             route_type = path.rsplit("/", 1)[-1]
             results = [item for item in TITLES if item["media_type"] == route_type]
