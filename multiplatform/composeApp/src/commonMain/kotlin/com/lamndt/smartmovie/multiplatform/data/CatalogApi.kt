@@ -117,7 +117,7 @@ class KtorCatalogApi(
     }
 
     override suspend fun home(mediaType: MediaType, language: String): HomeFeed = request {
-        client.get("$root/v1/home") {
+        client.get("$root/v2/home") {
             smartMovieHeaders()
             parameter("media_type", mediaType.wireValue)
             parameter("language", language)

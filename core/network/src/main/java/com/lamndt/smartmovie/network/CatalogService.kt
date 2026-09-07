@@ -39,7 +39,7 @@ import retrofit2.http.Query
 import retrofit2.http.QueryMap
 
 internal interface CatalogService {
-    @GET("v1/home")
+    @GET("v2/home")
     suspend fun home(
         @Header(CLIENT_HEADER) clientId: String,
         @Query("media_type") mediaType: String,
