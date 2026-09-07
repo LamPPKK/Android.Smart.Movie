@@ -89,4 +89,5 @@
     <string name="votes">投票數</string>
     <string name="episode_progress">劇集進度</string><string name="mark_as_watched">標記為已看</string><string name="mark_as_unwatched">標記為未看</string><string name="mark_season_watched">標記本季已看</string><string name="mark_season_unwatched">取消本季已看</string><string name="watched_progress">已看 %1$d/%2$d</string>
     <string name="trending">本週熱門</string><string name="trending_today">今日熱門</string><string name="trending_day">今天</string><string name="trending_week">本週</string>
+    <string name="continue_with_episode">繼續觀看劇集</string>
 </resources>
