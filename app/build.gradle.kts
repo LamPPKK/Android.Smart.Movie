@@ -20,8 +20,9 @@ android {
 
     buildTypes {
         debug {
+            // Android Emulator reaches the host machine through 10.0.2.2.
             // Debug uses the local fixture API so development does not depend on Worker DNS.
-            buildConfigField("String", "CATALOG_BASE_URL", "\"http://127.0.0.1:8099/\"")
+            buildConfigField("String", "CATALOG_BASE_URL", "\"http://10.0.2.2:8099/\"")
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-debug"
         }
