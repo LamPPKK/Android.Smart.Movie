@@ -11,7 +11,8 @@
   "companies_networks_keywords": true,
   "genres": true,
   "advanced_discover": true,
-    "watch_providers": true
+    "watch_providers": true,
+    "certifications": true
   },
   "account": {
     "browser_auth": true,
