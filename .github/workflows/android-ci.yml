@@ -96,10 +96,8 @@ jobs:
           script: |
             ./gradlew --dependency-verification=strict :app:installDebug
             adb shell am start -W -n com.lamndt.smartmovie.debug/com.lamndt.smartmovie.TvActivity
-            for attempt in 1 2 3 4 5 6 7 8 9 10; do
-              adb shell dumpsys activity activities | grep -q 'com.lamndt.smartmovie.TvActivity' && break
-              sleep 1
-            done
+            adb wait-for-device
+            sleep 5
             adb shell dumpsys activity activities | grep -q 'com.lamndt.smartmovie.TvActivity'
             adb shell input keyevent KEYCODE_DPAD_LEFT
             adb shell input keyevent KEYCODE_DPAD_DOWN
