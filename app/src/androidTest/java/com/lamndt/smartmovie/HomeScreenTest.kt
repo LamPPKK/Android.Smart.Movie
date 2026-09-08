@@ -30,7 +30,7 @@ class HomeScreenTest {
             SmartMovieTheme {
                 HomeScreen(
                     HomeUiState(feed = Loadable.Loaded(HomeFeed(MediaType.MOVIE, dune, listOf(HomeSection("popular", "Popular", listOf(dune)))))),
-                    images, {}, {}, { clicked = true }, {},
+                    images, {}, {}, {}, { clicked = true },
                 )
             }
         }
@@ -46,7 +46,7 @@ class HomeScreenTest {
         var retried = false
         compose.setContent {
             SmartMovieTheme {
-                HomeScreen(HomeUiState(feed = Loadable.Failed("Offline")), images, {}, { retried = true }, {}, {})
+                HomeScreen(HomeUiState(feed = Loadable.Failed("Offline")), images, {}, {}, { retried = true }, {})
             }
         }
 
